@@ -9,14 +9,14 @@ BleGamepad bleGamepad("ESP32S3-ProPad", "DIY-Console", 100);
 PCF8574 pcf8574(0x20); // A0, A1, A2 connected to GND
 bool pcfConnected = false;
 
-// 1. 8-Way D-Pad Pins (Active LOW)
-#define DPAD_UP    5
-#define DPAD_DOWN  6
-#define DPAD_LEFT  7
-#define DPAD_RIGHT 21
+// 1. 8-Way D-Pad Pins (Renamed to PIN_DPAD_* to avoid clash with library!)
+#define PIN_DPAD_UP    5
+#define PIN_DPAD_DOWN  6
+#define PIN_DPAD_LEFT  7
+#define PIN_DPAD_RIGHT 21
 
-// 2. Safe Action & Bumper Pins (Avoids strapping pins 0, 45, 46!)
-const int actionPins = {
+// 2. Safe Action & Bumper Pins (Notice the [] brackets!)
+const int actionPins[] = {
   38, // A  (Cross)
   15, // B  (Circle)
   16, // X  (Square)
@@ -25,7 +25,7 @@ const int actionPins = {
   17  // R1 (Right Bumper / Fire)
 };
 
-const int actionBtns = {
+const int actionBtns[] = {
   BUTTON_1, // A
   BUTTON_2, // B
   BUTTON_4, // X
@@ -35,7 +35,7 @@ const int actionBtns = {
 };
 
 // 3. PCF8574 Expander Pins: P0..P4 (Buttons), P5 (TTP223 Turbo), P6..P7 (L3, R3)
-const int pcfBtnMap = {
+const int pcfBtnMap[] = {
   BUTTON_12, // P0: Start
   BUTTON_11, // P1: Select
   BUTTON_9,  // P2: L2
@@ -67,10 +67,10 @@ int16_t mapAxis(int raw, bool invert) {
 }
 
 uint8_t readDpadHat() {
-  bool u = (digitalRead(DPAD_UP) == LOW);
-  bool d = (digitalRead(DPAD_DOWN) == LOW);
-  bool l = (digitalRead(DPAD_LEFT) == LOW);
-  bool r = (digitalRead(DPAD_RIGHT) == LOW);
+  bool u = (digitalRead(PIN_DPAD_UP) == LOW);
+  bool d = (digitalRead(PIN_DPAD_DOWN) == LOW);
+  bool l = (digitalRead(PIN_DPAD_LEFT) == LOW);
+  bool r = (digitalRead(PIN_DPAD_RIGHT) == LOW);
 
   if (u && r) return DPAD_UP_RIGHT;
   if (u && l) return DPAD_UP_LEFT;
@@ -100,10 +100,10 @@ void setup() {
   }
 
   // Configure Direct GPIO Buttons
-  pinMode(DPAD_UP, INPUT_PULLUP);
-  pinMode(DPAD_DOWN, INPUT_PULLUP);
-  pinMode(DPAD_LEFT, INPUT_PULLUP);
-  pinMode(DPAD_RIGHT, INPUT_PULLUP);
+  pinMode(PIN_DPAD_UP, INPUT_PULLUP);
+  pinMode(PIN_DPAD_DOWN, INPUT_PULLUP);
+  pinMode(PIN_DPAD_LEFT, INPUT_PULLUP);
+  pinMode(PIN_DPAD_RIGHT, INPUT_PULLUP);
   for (int i = 0; i < 6; i++) {
     pinMode(actionPins[i], INPUT_PULLUP);
   }
