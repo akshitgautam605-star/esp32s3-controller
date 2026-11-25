@@ -1,0 +1,25 @@
+name: Build ESP32-S3 Pro Controller
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install PlatformIO & Compile
+        run: |
+          pip install platformio
+          pio run
+      - name: Upload Ready-to-Flash Firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: ESP32S3-ProPad-Firmware
+          path: |
+            .pio/build/esp32-s3-devkitc-1/bootloader.bin
+            .pio/build/esp32-s3-devkitc-1/partitions.bin
+            .pio/build/esp32-s3-devkitc-1/firmware.bin
